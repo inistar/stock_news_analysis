@@ -7,7 +7,7 @@ class Kafka:
     def __init__(self):
         self.producer = KafkaProducer(
             bootstrap_servers=['localhost:9092'],
-            # value_serializer=lambda v: json.dumps(v).encode('utf-8')
+            value_serializer=lambda v: json.dumps(v).encode('utf-8')
         )
         print("Initialized producer....")
 
@@ -20,5 +20,11 @@ class Kafka:
     def send(self, topic, key, value):
         self.producer.send(topic=topic, key=key, value=value).add_callback(self.on_send_success).add_errback(self.on_send_error)
 
+    def send(self, topic, value):
+        self.producer.send(topic=topic, value=value).add_callback(self.on_send_success).add_errback(self.on_send_error)
+
     def flush(self):
         self.producer.flush()
+
+    def close(self):
+        self.producer.close()
