@@ -1,0 +1,27 @@
+CREATE SCHEMA IF NOT EXISTS inistar;
+
+CREATE TABLE IF NOT EXISTS news(
+	category VARCHAR(100) NOT NULL,
+	datetime INT NOT NULL,
+	headline VARCHAR(1000) NOT NULL,
+	id INT NOT NULL,
+	image VARCHAR(500),
+	related VARCHAR(500),
+	source VARCHAR(100),
+	summary VARCHAR(1000),
+	url VARCHAR(500),
+	PRIMARY KEY(id)
+);
+
+CREATE TABLE IF NOT EXISTS news_dev(
+	category VARCHAR(100) NOT NULL,
+	datetime INT NOT NULL,
+	headline VARCHAR(1000) NOT NULL,
+	id INT NOT NULL,
+	image VARCHAR(500),
+	related VARCHAR(500),
+	source VARCHAR(100),
+	summary VARCHAR(1000),
+	url VARCHAR(500),
+	PRIMARY KEY(id)
+);
