@@ -2,7 +2,7 @@ from finnhub_news_extractor import Finnhub
 from psql_python import PostgresSQLPython
 # from kafka_producer import Kafka
 
-import insert_sql_statements
+import sql_statements
 import time
 
 topic = 'stock_news'
@@ -22,7 +22,7 @@ if __name__ == '__main__':
             # k.send(topic, value=n_dict)
 
         if(len(news)):
-            p.batch_insert(news, insert_sql_statements.INSERT_QUERY_DEV)
+            p.batch_insert(news, sql_statements.INSERT_QUERY_PROD)
     
         time.sleep(1000)
 

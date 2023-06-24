@@ -1,5 +1,6 @@
 import psycopg2
 import secrets_stock_news
+import pandas as pd
 
 class PostgresSQLPython():
 
@@ -27,5 +28,19 @@ class PostgresSQLPython():
                 self.conn.rollback()
                 print("Error occurred during data insertion:", error)
 
+    def read_query(self, query):
+        with self.conn.cursor() as cursor:
+            try:
+                cursor.execute(query)
+                rows = cursor.fetchall()
+                return self.convert_to_df(rows)
+            except (psycopg2.Error, Exception) as error:
+                print("Error connecting to PostgreSQL:", error)
+
+        return None
+    
+    def convert_to_df(self, data):
+        return pd.DataFrame(data)
+    
     def close(self):
         self.conn.close()

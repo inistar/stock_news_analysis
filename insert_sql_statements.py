@@ -1,2 +1,0 @@
-INSERT_QUERY_DEV = "INSERT INTO news_dev (category, datetime, headline, id, image, related, source, summary, url) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-INSERT_QUERY_PROD = "INSERT INTO news (category, datetime, headline, id, image, related, source, summary, url) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
