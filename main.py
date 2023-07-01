@@ -6,6 +6,14 @@ import sql_statements
 import time
 
 topic = 'stock_news'
+TABLE_NAME = None
+
+if(sql_statements.ENV == 'DEV'):
+    # INSERT_QUERY = sql_statements.INSERT_QUERY_DEV
+    TABLE_NAME = sql_statements.TABLE_NAME_DEV
+else:
+    # INSERT_QUERY = sql_statements.INSERT_QUERY_PROD
+    TABLE_NAME = sql_statements.TABLE_NAME_PROD
 
 if __name__ == '__main__':
     print("Starting stock analysis pipeline....")
@@ -22,8 +30,11 @@ if __name__ == '__main__':
             # k.send(topic, value=n_dict)
 
         if(len(news)):
-            p.batch_insert(news, sql_statements.INSERT_QUERY_PROD)
+            news = f.find_sentiment(news)
+            p.batch_insert(news, TABLE_NAME)
     
+            f.update_min_id(news)
+
         time.sleep(1000)
 
     # k.flush()

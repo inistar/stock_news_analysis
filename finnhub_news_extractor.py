@@ -1,13 +1,21 @@
 import finnhub
 import secrets_stock_news
-import datetime
+import requests
+import sql_statements
+import pandas as pd
 
+MIN_ID_FILE = None
+
+if(sql_statements.ENV == 'DEV'):
+    MIN_ID_FILE = sql_statements.MIN_ID_DEV
+else:
+    MIN_ID_FILE = sql_statements.MIN_ID_PROD
 
 class Finnhub:
 
     def __init__(self) -> None:
         self.finnhub_client = finnhub.Client(api_key=secrets_stock_news.API_KEY)
-        file_open = open('min_id.txt', 'r')
+        file_open = open(MIN_ID_FILE, 'r')
         self.min_id = int(file_open.readline())
         file_open.close()
 
@@ -15,20 +23,43 @@ class Finnhub:
         
         news = self.finnhub_client.general_news(topic, self.min_id)
 
-        self._update_min_id(news)
+        # self._update_min_id(news)
         
         return news
 
-    def _update_min_id(self, news):
-        id = []
+    def _query(self, payload, headers):
+        response = requests.post(secrets_stock_news.HF_API_URL, headers=headers, json=payload)
+        return response.json()
 
-        for n in news:
-            id.append(n['id'])
+    def find_sentiment(self, df):
+        headers = {"Authorization": f"Bearer {secrets_stock_news.HF_API_TOKEN}"}
 
-        if(len(id)):
-            self.min_id = max(id)
-            file_open = open('min_id.txt', 'w')
-            file_open.write(str(self.min_id))
-            file_open.close()
+        df = pd.DataFrame(df)
+        
+        inputs = df['summary'].to_list()
+        payload = {"inputs": inputs}
+
+        outputs = None
+        count = 0
+        while(not outputs):
+            outputs = self._query(payload, headers)
+            if(count > 2):
+                break
+            count += 1
+
+        sentiment = []
+        for output in outputs:
+            sentiment.append(output[0]['label'])
+
+        df['sentiment'] = sentiment
+
+        return df
+
+
+    def update_min_id(self, news):
+        self.min_id = news['id'].max()
+        file_open = open(MIN_ID_FILE, 'w')
+        file_open.write(str(self.min_id))
+        file_open.close()
             
     

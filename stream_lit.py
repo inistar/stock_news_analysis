@@ -5,9 +5,20 @@ import sql_statements
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import nltk
+import re
 nltk.download('stopwords')
-
 from nltk.corpus import stopwords
+
+NEWS_LAST_2_DAYS_QUERY = None
+NEWS_LAST_7_DAYS_QUERY = None
+
+if(sql_statements.ENV == 'DEV'):
+    NEWS_LAST_2_DAYS_QUERY = sql_statements.NEWS_LAST_2_DAYS_QUERY_DEV
+    NEWS_LAST_7_DAYS_QUERY = sql_statements.NEWS_LAST_7_DAYS_QUERY_DEV
+else:
+    NEWS_LAST_2_DAYS_QUERY = sql_statements.NEWS_LAST_2_DAYS_QUERY_PROD
+    NEWS_LAST_7_DAYS_QUERY = sql_statements.NEWS_LAST_7_DAYS_QUERY_PROD
+
 
 st.title('News Analysis')
 
@@ -18,24 +29,21 @@ p = PostgresSQLPython()
 
 @st.cache_data
 def load_2_days_data():
-    return p.read_query(sql_statements.NEWS_LAST_2_DAYS_QUERY_PROD)
+    return p.read_query(NEWS_LAST_2_DAYS_QUERY)
 
 def load_7_days_data():
-    return p.read_query(sql_statements.NEWS_LAST_7_DAYS_QUERY_PROD)
+    return p.read_query(NEWS_LAST_7_DAYS_QUERY)
 
 data_load_state = st.text('Loading data...')
 NEWS_2_DAYS = load_2_days_data()
 NEWS_7_DAYS = load_7_days_data()
 data_load_state.text("Done! (using st.cache_data)")
 
-st.subheader('Raw data')
+st.subheader('Raw data of Last 2 Days')
 st.write(NEWS_2_DAYS)
 
-
-
-st.subheader('Word Cloud Last 7 Days')
 def generate_wordcloud(text):
-
+    text = re.sub(r'[^\w\s]', '', text)
     tokens = text.split()
 
     filler_words = set(stopwords.words('english'))
@@ -61,7 +69,24 @@ def generate_wordcloud(text):
                          'june',
                          'investor',
                          'investors',
-                         'year'
+                         'year-to-date',
+                         'years',
+                         'month',
+                         'days',
+                         'according',
+                         'another',
+                         'analyst',
+                         'market',
+                         "new",
+                         "stocks",
+                         "top",
+                         "million",
+                         "see",
+                         "first",
+                         "economy",
+                         "last",
+                         "inc",
+                         "companies"
                          ])
 
     filtered_tokens = [word.lower() for word in tokens if word.lower() not in filler_words]
@@ -75,23 +100,12 @@ def generate_wordcloud(text):
     plt.axis("off")
     st.pyplot(plt.gcf())
 
-combined_str = NEWS_7_DAYS[7].str.cat(sep=' ')
+st.subheader('Word Cloud Last 2 Days')
+combined_str = NEWS_2_DAYS[7].str.cat(sep=' ')
 generate_wordcloud(combined_str)
 
-
-
-st.subheader('Word Cloud Last 2 Days')
-# def generate_wordcloud(text):
-#     # Create WordCloud object
-#     wordcloud = WordCloud(width=800, height=400, background_color="white").generate(text)
-
-#     # Display the word cloud using matplotlib
-#     plt.figure(figsize=(10, 5))
-#     plt.imshow(wordcloud, interpolation="bilinear")
-#     plt.axis("off")
-#     st.pyplot(plt.gcf())
-
-combined_str = NEWS_2_DAYS[7].str.cat(sep=' ')
+st.subheader('Word Cloud Last 7 Days')
+combined_str = NEWS_7_DAYS[7].str.cat(sep=' ')
 generate_wordcloud(combined_str)
 
 

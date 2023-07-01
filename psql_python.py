@@ -1,6 +1,7 @@
 import psycopg2
 import secrets_stock_news
 import pandas as pd
+from psycopg2.extras import execute_values
 
 class PostgresSQLPython():
 
@@ -13,11 +14,18 @@ class PostgresSQLPython():
             port=secrets_stock_news.PSQL_PORT
         )
 
-    def batch_insert(self, news, insert_query):
+    def batch_insert(self, news, table_name):
         with self.conn.cursor() as cursor:
             try:
-                # Execute multiple INSERT statements in a single transaction
-                cursor.executemany(insert_query, [tuple(item.values()) for item in news])
+                values = news.values.tolist()
+
+                # Generate the SQL INSERT statement
+                columns = ", ".join(news.columns)
+                placeholders = ", ".join(["%s"] * len(news.columns))
+                insert_query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+                # Execute the INSERT statement for each row of data
+                cursor.executemany(insert_query, values)
 
                 # Commit the transaction
                 self.conn.commit()
