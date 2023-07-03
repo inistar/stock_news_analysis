@@ -4,10 +4,10 @@ The stock news analysis script periodically fetches data from the FinHub API eve
 
 To present the results of the word cloud and news sentiments, the script utilizes the Streamlit framework.
 
-Architecture Diagram
+### Architecture Diagram
 ![Alt text](image.png)
 
-Dashboard
+### Dashboard
 ![Alt text](image-1.png)
 
 
