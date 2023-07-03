@@ -40,7 +40,7 @@ NEWS_7_DAYS = load_7_days_data()
 data_load_state.text("Done! (using st.cache_data)")
 
 st.subheader('Raw data of Last 2 Days')
-st.write(NEWS_2_DAYS)
+st.write(NEWS_2_DAYS[[9,6,7,8]])
 
 def generate_wordcloud(text):
     text = re.sub(r'[^\w\s]', '', text)

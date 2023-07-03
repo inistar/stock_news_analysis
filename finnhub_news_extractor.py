@@ -3,6 +3,7 @@ import secrets_stock_news
 import requests
 import sql_statements
 import pandas as pd
+import time
 
 MIN_ID_FILE = None
 
@@ -46,8 +47,12 @@ class Finnhub:
             if(count > 2):
                 break
             count += 1
+            print("Sleeping...")
+            time.sleep(5)
+
 
         sentiment = []
+        # print(outputs)
         for output in outputs:
             sentiment.append(output[0]['label'])
 
