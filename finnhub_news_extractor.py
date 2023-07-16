@@ -52,7 +52,7 @@ class Finnhub:
 
 
         sentiment = []
-        # print(outputs)
+        print(outputs)
         for output in outputs:
             sentiment.append(output[0]['label'])
 
