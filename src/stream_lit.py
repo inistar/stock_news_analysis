@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
-from psql_python import PostgresSQLPython
-import sql_statements
+from stock_news_analysis.src.psql_python import PostgresSQLPython
+import stock_news_analysis.src.sql_statements as sql_statements
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import nltk

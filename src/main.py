@@ -1,8 +1,8 @@
-from finnhub_news_extractor import Finnhub
-from psql_python import PostgresSQLPython
+from stock_news_analysis.src.finnhub_news_extractor import Finnhub
+from stock_news_analysis.src.psql_python import PostgresSQLPython
 # from kafka_producer import Kafka
 
-import sql_statements
+import stock_news_analysis.src.sql_statements as sql_statements
 import time
 
 topic = 'stock_news'

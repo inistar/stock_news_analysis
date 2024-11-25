@@ -1,7 +1,7 @@
 import finnhub
 import secrets_stock_news
 import requests
-import sql_statements
+import stock_news_analysis.src.sql_statements as sql_statements
 import pandas as pd
 import time
 
